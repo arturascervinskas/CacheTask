@@ -46,33 +46,33 @@ public class ItemService
         return users;
     }
 
-    //public async Task<Guid> Add(UserAdd user)
-    //{
-    //    ItemEntity userEntity = new()
-    //    {
-    //        Name = user.Name,
-    //        Address = user.Address,
-    //    };
+    public async Task<Guid> Add(UserAdd user)
+    {
+        ItemEntity userEntity = new()
+        {
+            Name = user.Name,
+            Address = user.Address,
+        };
 
-    //    return await _userRepository.Add(userEntity);
-    //}
+        return await _userRepository.Add(userEntity);
+    }
 
-    //public async Task Update(Guid id, UserAdd user)
-    //{
-    //    await Get(id);
+    public async Task Update(Guid id, UserAdd user)
+    {
+        await Get(id);
 
-    //    ItemEntity itemEntity = new()
-    //    {
-    //        Id = id,
-    //        Name = user.Name,
-    //        Address = user.Address,
-    //    };
+        ItemEntity itemEntity = new()
+        {
+            Id = id,
+            Name = user.Name,
+            Address = user.Address,
+        };
 
-    //    int result = await _userRepository.Update(itemEntity);
+        int result = await _userRepository.Update(itemEntity);
 
-    //    if (result > 1)
-    //        throw new InvalidOperationException("Update was performed on multiple rows");
-    //}
+        if (result > 1)
+            throw new InvalidOperationException("Update was performed on multiple rows");
+    }
 
     public async Task Delete(Guid id)
     {

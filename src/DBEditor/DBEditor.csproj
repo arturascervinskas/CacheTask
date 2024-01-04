@@ -15,9 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <EmbeddedResource Include="ScriptsSQL\CreateTables\001CreateDB.sql" />
-	  <EmbeddedResource Include="ScriptsSQL\CreateTables\002ClearTables.sql" />
-    <EmbeddedResource Include="ScriptsSQL\CreateTables\003CreateTables.sql" />
+	  <EmbeddedResource Include="ScriptsSQL\CreateTables\001ClearTables.sql" />
+    <EmbeddedResource Include="ScriptsSQL\CreateTables\002CreateUsersTables.sql" />
   </ItemGroup>
 
   <ItemGroup>
