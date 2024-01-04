@@ -13,6 +13,6 @@ public static class DependencyInjection
         Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
         services.AddScoped<IDbConnection>(sp => new NpgsqlConnection(dbConnectionString));
         services.AddScoped<IItemRepository, ItemRepository>();
-    
+
     }
 }

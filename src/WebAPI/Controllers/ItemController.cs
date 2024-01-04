@@ -25,25 +25,4 @@ public class ItemController : ControllerBase
     {
         return Ok(await _dictionaryService.Get(id));
     }
-    [HttpPost]
-    public async Task<IActionResult> Add(UserAdd item)
-    {
-        Guid guid = await _dictionaryService.Add(item);
-        return CreatedAtAction(nameof(Get), new { Id = guid }, item);
-    }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, UserAdd _item)
-    {
-        await _dictionaryService.Update(id, _item);
-        return Ok();
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id)
-    {
-        await _dictionaryService.Delete(id);
-        return Ok();
-    }
-
 }
