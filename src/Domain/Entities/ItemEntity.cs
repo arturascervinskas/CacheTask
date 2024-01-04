@@ -1,6 +1,6 @@
 ﻿namespace Domain.Entities;
 
-public class ItemEntity : BaseEntity
+public class ItemEntity 
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }

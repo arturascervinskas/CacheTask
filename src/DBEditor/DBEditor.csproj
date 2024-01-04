@@ -10,16 +10,14 @@
   <ItemGroup>
     <None Remove="ScriptsSQL\000ClearTables.sql" />
     <None Remove="ScriptsSQL\001CreateDB.sql" />
-    <None Remove="ScriptsSQL\002CreateItemsTable.sql" />
-    <None Remove="ScriptsSQL\003CreateRolesTable.sql" />
-    <None Remove="ScriptsSQL\004CreateUsersTable.sql" />
-    <None Remove="ScriptsSQL\005CreateCartsTable.sql" />
-    <None Remove="ScriptsSQL\006CreateItemCartsTable.sql" />
+    <None Remove="ScriptsSQL\002CreateUsersTable.sql" />
+    <None Remove="ScriptsSQL\003CreateItemsTable.sql" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="ScriptsSQL\CreateTables\001ClearTables.sql" />
-    <EmbeddedResource Include="ScriptsSQL\CreateTables\002CreateItemTable.sql" />
+	  <EmbeddedResource Include="ScriptsSQL\CreateTables\001CreateDB.sql" />
+	  <EmbeddedResource Include="ScriptsSQL\CreateTables\002ClearTables.sql" />
+    <EmbeddedResource Include="ScriptsSQL\CreateTables\003CreateTables.sql" />
   </ItemGroup>
 
   <ItemGroup>
