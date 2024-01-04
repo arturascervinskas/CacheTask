@@ -26,7 +26,7 @@ internal class Program
             Console.ResetColor();
             return false;
         }
-
+        ;
         return true;
     }
 
