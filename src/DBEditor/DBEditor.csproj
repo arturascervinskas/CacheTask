@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="ScriptsSQL\CreateTables\001ClearTables.sql" />
-    <EmbeddedResource Include="ScriptsSQL\CreateTables\002CreateDictionaryTable.sql" />
+    <EmbeddedResource Include="ScriptsSQL\CreateTables\002CreateItemTable.sql" />
   </ItemGroup>
 
   <ItemGroup>

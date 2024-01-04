@@ -5,34 +5,34 @@ using System.Data;
 
 namespace Infrastructure.Repository;
 
-public class DictionaryRepository : IDictionaryRepository
+public class ItemRepository : IItemRepository
 {
     private readonly IDbConnection _dbConnection;
 
-    public DictionaryRepository(IDbConnection dbConnection)
+    public ItemRepository(IDbConnection dbConnection)
     {
         _dbConnection = dbConnection;
     }
 
-    public async Task<DictionaryEntity?> Get(Guid id)
+    public async Task<ItemEntity?> Get(Guid id)
     {
         var queryArguments = new { Id = id };
 
         string sql = @"SELECT * FROM users
                             WHERE id=@Id AND is_deleted=false";
 
-        return await _dbConnection.QuerySingleOrDefaultAsync<DictionaryEntity>(sql, queryArguments);
+        return await _dbConnection.QuerySingleOrDefaultAsync<ItemEntity>(sql, queryArguments);
     }
 
-    public async Task<IEnumerable<DictionaryEntity>> Get()
+    public async Task<IEnumerable<ItemEntity>> Get()
     {
         string sql = @"SELECT * FROM users
                             WHERE is_deleted=false";
 
-        return await _dbConnection.QueryAsync<DictionaryEntity>(sql);
+        return await _dbConnection.QueryAsync<ItemEntity>(sql);
     }
 
-    public async Task<Guid> Add(DictionaryEntity user)
+    public async Task<Guid> Add(ItemEntity user)
     {
         string sql = @"INSERT INTO users
                             (name, address)
@@ -42,7 +42,7 @@ public class DictionaryRepository : IDictionaryRepository
         return await _dbConnection.ExecuteScalarAsync<Guid>(sql, user);
     }
 
-    public async Task<int> Update(DictionaryEntity user)
+    public async Task<int> Update(ItemEntity user)
     {
         string sql = @"UPDATE users
                             SET name=@Name, address=@Address

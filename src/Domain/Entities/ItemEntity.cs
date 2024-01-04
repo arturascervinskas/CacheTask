@@ -1,6 +1,6 @@
 ﻿namespace Domain.Entities;
 
-public class DictionaryEntity : BaseEntity
+public class ItemEntity : BaseEntity
 {
     public Guid Id { get; set; }
     public string? Name { get; set; }

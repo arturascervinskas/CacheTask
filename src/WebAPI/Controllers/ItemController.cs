@@ -5,11 +5,11 @@ namespace WebAPI.Controllers;
 
 [ApiController]
 [Route("v1/[controller]")]
-public class DictionaryController : ControllerBase
+public class ItemController : ControllerBase
 {
-    private readonly DictionaryService _dictionaryService;
+    private readonly ItemService _dictionaryService;
 
-    public DictionaryController(DictionaryService dictionaryService)
+    public ItemController(ItemService dictionaryService)
     {
         _dictionaryService = dictionaryService;
     }

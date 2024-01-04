@@ -5,20 +5,20 @@ using Domain.Interfaces;
 
 namespace Application.Services;
 
-public class DictionaryService
+public class ItemService
 {
-    private readonly IDictionaryRepository _userRepository;
+    private readonly IItemRepository _userRepository;
 
-    public DictionaryService(IDictionaryRepository userRepository)
+    public ItemService(IItemRepository userRepository)
     {
         _userRepository = userRepository;
     }
 
-    public async Task<Dictionary> Get(Guid id)
+    public async Task<Item> Get(Guid id)
     {
-        DictionaryEntity userEntity = await _userRepository.Get(id) ?? throw new NotFoundException("User not found in DB");
+        ItemEntity userEntity = await _userRepository.Get(id) ?? throw new NotFoundException("User not found in DB");
 
-        Dictionary user = new()
+        Item user = new()
         {
             Id = id,
             Name = userEntity.Name,
@@ -28,15 +28,15 @@ public class DictionaryService
         return user;
     }
 
-    public async Task<List<Dictionary>> Get()
+    public async Task<List<Item>> Get()
     {
-        List<Dictionary> users = [];
-        IEnumerable<DictionaryEntity> usersEntities = await _userRepository.Get();
+        List<Item> users = [];
+        IEnumerable<ItemEntity> usersEntities = await _userRepository.Get();
 
         if (!usersEntities.Any())
             return [];
 
-        users = usersEntities.Select(o => new Dictionary()
+        users = usersEntities.Select(o => new Item()
         {
             Id = o.Id,
             Name = o.Name,
@@ -48,7 +48,7 @@ public class DictionaryService
 
     public async Task<Guid> Add(UserAdd user)
     {
-        DictionaryEntity userEntity = new()
+        ItemEntity userEntity = new()
         {
             Name = user.Name,
             Address = user.Address,
@@ -61,7 +61,7 @@ public class DictionaryService
     {
         await Get(id);
 
-        DictionaryEntity itemEntity = new()
+        ItemEntity itemEntity = new()
         {
             Id = id,
             Name = user.Name,
