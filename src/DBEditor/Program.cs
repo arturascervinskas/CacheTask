@@ -12,7 +12,7 @@ internal class Program
         var upgrader =
             DeployChanges.To
                 .PostgresqlDatabase(dbConnectionString)
-                .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
+                .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly(), name => name.Contains(scriptFilter))
                 .WithVariablesEnabled()
                 .LogToConsole()
                 .Build();
