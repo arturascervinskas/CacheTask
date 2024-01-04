@@ -5,7 +5,7 @@
     password character varying(50) COLLATE pg_catalog."default" NOT NULL,
 
     CONSTRAINT pkey_users  PRIMARY KEY (id)
-),
+);
 
 CREATE TABLE IF NOT EXISTS public.items
 (
