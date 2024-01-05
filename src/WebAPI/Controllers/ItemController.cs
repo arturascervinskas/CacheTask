@@ -28,7 +28,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(ItemDto itemDto)
+    public async Task<IActionResult> Create(ItemCreate itemDto)
     {
         string response = await _itemService.Create(itemDto);
 
@@ -36,7 +36,7 @@ public class ItemController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(ItemDto itemDto)
+    public async Task<IActionResult> Update(ItemCreate itemDto)
     {
         string response = await _itemService.Update(itemDto);
 

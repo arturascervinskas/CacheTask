@@ -15,7 +15,7 @@ public class ItemService
         _itemRepository = itemRepository;
     }
 
-    public async Task<IEnumerable<GetItemDto>> Get()
+    public async Task<IEnumerable<Item>> Get()
     {
         IEnumerable<ItemEntity> itemEntities = await _itemRepository.Get();
 
@@ -24,7 +24,7 @@ public class ItemService
             throw new NotFoundException("No items found");
         }
 
-        IEnumerable<GetItemDto> items = itemEntities.Select(o => new GetItemDto
+        IEnumerable<Item> items = itemEntities.Select(o => new Item
         {
             Key = o.Key,
             Value = JsonSerializer.Deserialize<List<string>>(o.Value),
@@ -35,11 +35,11 @@ public class ItemService
         return items;
     }
 
-    public async Task<GetItemDto> Get(string key)
+    public async Task<Item> Get(string key)
     {
         ItemEntity itemEntity = await _itemRepository.Get(key) ?? throw new NotFoundException("Key not found");
 
-        GetItemDto item = new()
+        Item item = new()
         {
             Key = itemEntity.Key,
             Value = JsonSerializer.Deserialize<List<string>>(itemEntity.Value),
@@ -50,7 +50,7 @@ public class ItemService
         return item;
     }
 
-    public async Task<string> Create(ItemDto itemDto)
+    public async Task<string> Create(ItemCreate itemDto)
     {
         if (await _itemRepository.Get(itemDto.Key) is null)
         {
@@ -86,7 +86,7 @@ public class ItemService
         }
     }
 
-    public async Task<string> Update(ItemDto itemDto)
+    public async Task<string> Update(ItemCreate itemDto)
     {
         if (await _itemRepository.Get(itemDto.Key) is null)
         {

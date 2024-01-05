@@ -1,6 +1,6 @@
 ﻿namespace Application.Dto;
 
-public class ItemDto
+public class ItemCreate
 {
 
     public string Key { get; set; }

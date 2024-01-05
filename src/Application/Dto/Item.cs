@@ -1,6 +1,6 @@
 ﻿namespace Application.Dto;
 
-public class GetItemDto
+public class Item
 {
     public string Key { get; set; }
     public List<string> Value { get; set; }
