@@ -27,7 +27,7 @@ public class ItemService
         IEnumerable<Item> items = itemEntities.Select(o => new Item
         {
             Key = o.Key,
-            Value = JsonSerializer.Deserialize<List<string>>(o.Value),
+            Value = JsonSerializer.Deserialize<List<object>>(o.Value),
             ExpirationPeriod = o.ExpirationPeriod,
             ExpirationDate = o.ExpirationDate
         });
@@ -42,7 +42,7 @@ public class ItemService
         Item item = new()
         {
             Key = itemEntity.Key,
-            Value = JsonSerializer.Deserialize<List<string>>(itemEntity.Value),
+            Value = JsonSerializer.Deserialize<List<object>>(itemEntity.Value),
             ExpirationPeriod = itemEntity.ExpirationPeriod,
             ExpirationDate = itemEntity.ExpirationDate
         };
