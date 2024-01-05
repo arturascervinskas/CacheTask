@@ -1,7 +1,6 @@
 using Application.Dto;
 using Application.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.Design;
 
 namespace WebAPI.Controllers;
 
@@ -22,7 +21,7 @@ public class ItemController : ControllerBase
         return Ok(await _itemService.Get());
     }
 
-    [HttpGet("byKey")]
+    [HttpGet("{key}")]
     public async Task<IActionResult> Get(string key)
     {
         return Ok(await _itemService.Get(key));
@@ -44,7 +43,7 @@ public class ItemController : ControllerBase
         return Ok(new { response });
     }
 
-    [HttpDelete("byKey")]
+    [HttpDelete("{key}")]
     public async Task<IActionResult> Delete(string key)
     {
         await _itemService.Delete(key);

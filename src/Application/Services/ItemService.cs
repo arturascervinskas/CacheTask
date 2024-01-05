@@ -19,7 +19,7 @@ public class ItemService
     {
         IEnumerable<ItemEntity> itemEntities = await _itemRepository.Get();
 
-        if (itemEntities == null || !itemEntities.Any())
+        if (!itemEntities.Any())
         {
             throw new NotFoundException("No items found");
         }
@@ -50,18 +50,14 @@ public class ItemService
 
     public async Task<string> Create(ItemDto itemDto)
     {
-        if (itemDto == null)
-        {
-            throw new ArgumentNullException(nameof(itemDto), "Cannot be null.");
-        }
-
         if (await _itemRepository.Get(itemDto.Key) is null)
         {
             ItemEntity itemEntity = new()
             {
                 Key = itemDto.Key,
                 Value = JsonSerializer.Serialize(itemDto.Value),
-                ExpirationPeriod = itemDto.ExpirationPeriod
+                ExpirationPeriod = itemDto.ExpirationPeriod,
+                ExpirationDate = DateTime.Now.AddSeconds(itemDto.ExpirationPeriod)
             };
 
             await _itemRepository.Create(itemEntity);
