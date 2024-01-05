@@ -16,7 +16,8 @@ public class ItemService
 
     public async Task<Item> Get(Guid id)
     {
-        ItemEntity userEntity = await _userRepository.Get(id) ?? throw new NotFoundException("User not found in DB");
+        ItemEntity userEntity = await _userRepository.Get(id) 
+                                    ?? throw new NotFoundException("User not found in DB");
 
         Item user = new()
         {

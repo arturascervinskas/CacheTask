@@ -29,7 +29,7 @@ public class Program
 
         builder.Services.AddApplication();
         builder.Services.AddInfrastructure(dbConnectionString);
-        builder.Services.AddJWTAuthentication(builder.Configuration);
+        builder.Services.AddJWTAuthenticate(builder.Configuration);
 
         //change logger
         builder.Logging.ClearProviders();

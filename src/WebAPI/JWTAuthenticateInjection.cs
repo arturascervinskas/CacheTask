@@ -1,15 +1,19 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Domain.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Text;
+using WebAPI.Services;
 
 namespace WebAPI;
 
-public static class JWTAuthenticationInjection
+public static class JWTAuthenticateInjection
 {
-    public static void AddJWTAuthentication(this IServiceCollection services, IConfiguration config)
+    public static void AddJWTAuthenticate(this IServiceCollection services, IConfiguration config)
     {
+        services.AddScoped<IJWTService, JWTService>();
+
         string secretKey = config["Jwt:SecretKey"] ?? throw new InvalidDataException("JWT SecretKey");
         string issuer = config["Jwt:Issuer"] ?? throw new InvalidDataException("JWT Issuer");
         string audience = config["Jwt:Audience"] ?? throw new InvalidDataException("JWT audience");

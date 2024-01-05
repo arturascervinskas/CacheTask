@@ -1,4 +1,6 @@
 ﻿using Application.Dto;
+using Domain.Dto;
+using Domain.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -6,7 +8,7 @@ using System.Text;
 
 namespace WebAPI.Services;
 
-public class JWTService
+public class JWTService : IJWTService
 {
     private readonly IConfiguration _config;
 
@@ -34,7 +36,7 @@ public class JWTService
             {
                 new Claim(ClaimTypes.NameIdentifier, guid.ToString()),
                 new Claim(ClaimTypes.Role, role)
-            }),            
+            }),
             Issuer = issuer,
             Audience = audience,
             Expires = DateTime.UtcNow.AddMinutes(15),
