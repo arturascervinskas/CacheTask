@@ -29,6 +29,10 @@ public class ErrorChecking
 
             switch (e)
             {
+                case FoundException:
+                    message = "All ready exists";
+                    statusCode = StatusCodes.Status401Unauthorized;
+                    break;
                 case UnauthorizedAccessException:
                     message = "Use higher authorization level";
                     statusCode = StatusCodes.Status401Unauthorized;

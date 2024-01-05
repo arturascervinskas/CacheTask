@@ -2,6 +2,7 @@
 using Application;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text.Json.Serialization;
 using WebAPI.Middleware;
@@ -17,16 +18,18 @@ public class Program
         // Add services to the container.
 
         builder.Services.AddControllers()
-                            .AddJsonOptions(options => 
-                            { 
-                                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); 
-                            });
+                        .AddJsonOptions(options =>
+                        {
+                            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                        });
+
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
         builder.Services.AddApplication();
         builder.Services.AddInfrastructure(dbConnectionString);
+        builder.Services.AddJWTAuthenticate(builder.Configuration);
 
         //change logger
         builder.Logging.ClearProviders();
@@ -36,8 +39,6 @@ public class Program
             .CreateLogger();
 
         builder.Logging.AddSerilog(logger);
-
-        builder.Services.AddHttpClient();
 
         var app = builder.Build();
 
@@ -49,11 +50,9 @@ public class Program
         {
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API Name v1"));
-
         }
 
         app.UseHttpsRedirection();
-        app.UseAuthorization();
         app.MapControllers();
 
         app.Run();

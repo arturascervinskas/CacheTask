@@ -39,7 +39,6 @@ public class ItemController : ControllerBase
     public async Task<IActionResult> Update(ItemCreate itemDto)
     {
         string response = await _itemService.Update(itemDto);
-
         return Ok(new { response });
     }
 

@@ -21,7 +21,7 @@ public class ItemService
 
         if (!itemEntities.Any())
         {
-            throw new NotFoundException("No items found");
+            return [];
         }
 
         IEnumerable<Item> items = itemEntities.Select(o => new Item
@@ -31,7 +31,7 @@ public class ItemService
             ExpirationPeriod = o.ExpirationPeriod,
             ExpirationDate = o.ExpirationDate
         });
-  
+
         return items;
     }
 
