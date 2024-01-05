@@ -4,13 +4,19 @@ using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using System.Reflection;
 using System.Text.Json.Serialization;
 using WebAPI.Middleware;
 
 namespace WebAPI;
-
+/// <summary>
+/// Main entry point for the application.
+/// </summary>
 public class Program
 {
+    /// <summary>
+    /// Main method that starts the application.
+    /// </summary>
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
@@ -39,6 +45,18 @@ public class Program
             .CreateLogger();
 
         builder.Logging.AddSerilog(logger);
+
+        builder.Services.AddHttpClient();
+
+        builder.Services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "CacheTask", Version = "v1" });
+
+            // Include the XML comments file
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            c.IncludeXmlComments(xmlPath);
+        });
 
         var app = builder.Build();
 
