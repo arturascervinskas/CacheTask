@@ -19,7 +19,6 @@ public class ItemRepository : IItemRepository
         string sql = @"SELECT * FROM items";
 
         return await _dbConnection.QueryAsync<ItemEntity>(sql);
-
     }
 
     public async Task<ItemEntity?> Get(string key)
@@ -35,7 +34,8 @@ public class ItemRepository : IItemRepository
 
         string sql = @"INSERT INTO items 
                         (key, value, expiration_period, expiration_date) 
-                        VALUES (@Key, @Value, @ExpirationPeriod, @ExpirationDate) RETURNING *";
+                        VALUES (@Key, @Value, @ExpirationPeriod, @ExpirationDate) 
+                        RETURNING *";
 
         return await _dbConnection.QuerySingleOrDefaultAsync<ItemEntity>(sql, itemEntity);
     }
@@ -44,7 +44,8 @@ public class ItemRepository : IItemRepository
     {
         string sql = @"UPDATE items 
                         SET key=@Key, value=@Value, expiration_period=@ExpirationPeriod
-                        WHERE key=@Key RETURNING *";
+                        WHERE key=@Key 
+                        RETURNING *";
 
         return await _dbConnection.QuerySingleOrDefaultAsync<ItemEntity>(sql, itemEntity); ;
     }

@@ -48,12 +48,7 @@ public class ItemController : ControllerBase
     {
         await _itemService.Delete(key);
 
-        var response = new
-        {
-            Message = "Key deleted",
-        };
-
-        return Ok(response);
+        return Ok(new { response = "Key deleted"});
     }
 
 }
