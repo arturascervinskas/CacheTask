@@ -5,17 +5,30 @@ using System.Security;
 
 namespace WebAPI.Middleware;
 
+/// <summary>
+/// This class provides error checking functionality.
+/// </summary>
 public class ErrorChecking
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<ErrorChecking> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of the ErrorChecking class.
+    /// </summary>
+    /// <param name="next">The request delegate.</param>
+    /// <param name="logger">The logger.</param>
     public ErrorChecking(RequestDelegate next, ILogger<ErrorChecking> logger)
     {
         _next = next;
         _logger = logger;
     }
 
+    /// <summary>
+    /// Invokes the middleware to perform error checking asynchronously.
+    /// </summary>
+    /// <param name="context">The HTTP context for the current request.</param>
+    /// <returns>A Task representing the asynchronous operation.</returns>
     public async Task InvokeAsync(HttpContext context)
     {
         try
