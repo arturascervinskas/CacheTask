@@ -31,7 +31,6 @@ public class Program
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
 
         builder.Services.AddApplication();
         builder.Services.AddInfrastructure(dbConnectionString);
@@ -63,7 +62,7 @@ public class Program
         //custom middleware
         app.UseMiddleware<ErrorChecking>();
 
-        // Configure the HTTP request pipeline.
+        //Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
