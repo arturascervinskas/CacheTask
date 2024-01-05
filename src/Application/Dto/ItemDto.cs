@@ -1,9 +1,9 @@
-﻿namespace Domain.Entities;
+﻿namespace Application.Dto;
 
-public class ItemEntity
+public class ItemDto
 {
     public string Key { get; set; }
-    public string Value { get; set; }
+    public List<string> Value { get; set; }
     public int ExpirationPeriod { get; set; }
     public DateTime ExpirationDate { get; set; }
 }

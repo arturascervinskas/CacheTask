@@ -1,5 +1,7 @@
+using Application.Dto;
 using Application.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.Design;
 
 namespace WebAPI.Controllers;
 
@@ -7,43 +9,52 @@ namespace WebAPI.Controllers;
 [Route("v1/[controller]")]
 public class ItemController : ControllerBase
 {
-    private readonly ItemService _dictionaryService;
+    private readonly ItemService _itemService;
 
-    public ItemController(ItemService dictionaryService)
+    public ItemController(ItemService itemService)
     {
-        _dictionaryService = dictionaryService;
+        _itemService = itemService;
     }
 
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        return Ok(await _dictionaryService.Get());
+        return Ok(await _itemService.Get());
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> Get(Guid id)
+    [HttpGet("byKey")]
+    public async Task<IActionResult> Get(string key)
     {
-        return Ok(await _dictionaryService.Get(id));
+        return Ok(await _itemService.Get(key));
     }
+
     [HttpPost]
-    public async Task<IActionResult> Add(UserAdd item)
+    public async Task<IActionResult> Create(ItemDto itemDto)
     {
-        Guid guid = await _dictionaryService.Add(item);
-        return CreatedAtAction(nameof(Get), new { Id = guid }, item);
+        string response = await _itemService.Create(itemDto);
+
+        return Ok(new { response });
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, UserAdd _item)
+    [HttpPut]
+    public async Task<IActionResult> Update(ItemDto itemDto)
     {
-        await _dictionaryService.Update(id, _item);
-        return Ok();
+        string response = await _itemService.Update(itemDto);
+
+        return Ok(new { response });
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id)
+    [HttpDelete("byKey")]
+    public async Task<IActionResult> Delete(string key)
     {
-        await _dictionaryService.Delete(id);
-        return Ok();
+        await _itemService.Delete(key);
+
+        var response = new
+        {
+            Message = "Key deleted",
+        };
+
+        return Ok(response);
     }
 
 }

@@ -2,82 +2,108 @@
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;
+using System.Text.Json;
 
 namespace Application.Services;
 
 public class ItemService
 {
-    private readonly IItemRepository _userRepository;
+    private readonly IItemRepository _itemRepository;
 
-    public ItemService(IItemRepository userRepository)
+    public ItemService(IItemRepository itemRepository)
     {
-        _userRepository = userRepository;
+        _itemRepository = itemRepository;
     }
 
-    public async Task<Item> Get(Guid id)
+    public async Task<IEnumerable<ItemDto>> Get()
     {
-        ItemEntity userEntity = await _userRepository.Get(id) ?? throw new NotFoundException("User not found in DB");
+        IEnumerable<ItemEntity> itemEntities = await _itemRepository.Get();
 
-        Item user = new()
+        if (itemEntities == null || !itemEntities.Any())
         {
-            Id = id,
-            Name = userEntity.Name,
-            Address = userEntity.Address,
+            throw new NotFoundException("No items found");
+        }
+
+        IEnumerable<ItemDto> items = itemEntities.Select(itemEntity => new ItemDto
+        {
+            Key = itemEntity.Key,
+            Value = JsonSerializer.Deserialize<List<string>>(itemEntity.Value),
+            ExpirationPeriod = itemEntity.ExpirationPeriod
+        });
+
+        return items;
+    }
+
+    public async Task<ItemDto> Get(string key)
+    {
+        ItemEntity itemEntity = await _itemRepository.Get(key) ?? throw new NotFoundException("Key not found");
+
+        ItemDto item = new()
+        {
+            Key = itemEntity.Key,
+            Value = JsonSerializer.Deserialize<List<string>>(itemEntity.Value),
+            ExpirationPeriod = itemEntity.ExpirationPeriod
         };
 
-        return user;
+        return item;
     }
 
-    public async Task<List<Item>> Get()
+    public async Task<string> Create(ItemDto itemDto)
     {
-        List<Item> users = [];
-        IEnumerable<ItemEntity> usersEntities = await _userRepository.Get();
-
-        if (!usersEntities.Any())
-            return [];
-
-        users = usersEntities.Select(o => new Item()
+        if (itemDto == null)
         {
-            Id = o.Id,
-            Name = o.Name,
-            Address = o.Address,
-        }).ToList();
+            throw new ArgumentNullException(nameof(itemDto), "Cannot be null.");
+        }
 
-        return users;
-    }
-
-    public async Task<Guid> Add(UserAdd user)
-    {
-        ItemEntity userEntity = new()
+        if (await _itemRepository.Get(itemDto.Key) is null)
         {
-            Name = user.Name,
-            Address = user.Address,
-        };
+            ItemEntity itemEntity = new()
+            {
+                Key = itemDto.Key,
+                Value = JsonSerializer.Serialize(itemDto.Value),
+                ExpirationPeriod = itemDto.ExpirationPeriod
+            };
 
-        return await _userRepository.Add(userEntity);
-    }
+            await _itemRepository.Create(itemEntity);
 
-    public async Task Update(Guid id, UserAdd user)
-    {
-        await Get(id);
-
-        ItemEntity itemEntity = new()
+            return "Item created";
+        }
+        else
         {
-            Id = id,
-            Name = user.Name,
-            Address = user.Address,
-        };
+            await Update(itemDto);
 
-        int result = await _userRepository.Update(itemEntity);
-
-        if (result > 1)
-            throw new InvalidOperationException("Update was performed on multiple rows");
+            return "Item updated";
+        }
     }
 
-    public async Task Delete(Guid id)
+    public async Task<string> Update(ItemDto itemDto)
     {
-        await Get(id);
 
-        await _userRepository.Delete(id);
+        if (await _itemRepository.Get(itemDto.Key) is null)
+        {
+            await Create(itemDto);
+
+            return "Item created";
+        }
+        else
+        {
+            ItemEntity itemEntity = new()
+            {
+                Key = itemDto.Key,
+                Value = JsonSerializer.Serialize(itemDto.Value),
+                ExpirationPeriod = itemDto.ExpirationPeriod
+            };
+
+            await _itemRepository.Update(itemEntity);
+
+            return "Item updated";
+        }
+    }
+
+    public async Task Delete(string key)
+    {
+        await Get(key);
+
+        await _itemRepository.Delete(key);
     }
 }
