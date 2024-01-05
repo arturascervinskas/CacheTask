@@ -14,51 +14,47 @@ public class ItemRepository : IItemRepository
         _dbConnection = dbConnection;
     }
 
-    public async Task<ItemEntity?> Get(Guid id)
-    {
-        var queryArguments = new { Id = id };
-
-        string sql = @"SELECT * FROM users
-                            WHERE id=@Id AND is_deleted=false";
-
-        return await _dbConnection.QuerySingleOrDefaultAsync<ItemEntity>(sql, queryArguments);
-    }
-
     public async Task<IEnumerable<ItemEntity>> Get()
     {
-        string sql = @"SELECT * FROM users
-                            WHERE is_deleted=false";
+        string sql = @"SELECT * FROM items";
 
         return await _dbConnection.QueryAsync<ItemEntity>(sql);
     }
 
-    public async Task<Guid> Add(ItemEntity user)
+    public async Task<ItemEntity?> Get(string key)
     {
-        string sql = @"INSERT INTO users
-                            (name, address)
-                            VALUES (@Name, @Address)
-                            RETURNING id";
+        string sql = @"SELECT * FROM items 
+                        WHERE key=@Key";
 
-        return await _dbConnection.ExecuteScalarAsync<Guid>(sql, user);
+        return await _dbConnection.QuerySingleOrDefaultAsync<ItemEntity>(sql, new { key });
     }
 
-    public async Task<int> Update(ItemEntity user)
+    public async Task<ItemEntity?> Create(ItemEntity itemEntity)
     {
-        string sql = @"UPDATE users
-                            SET name=@Name, address=@Address
-                            WHERE id=@Id AND is_deleted=false";
 
-        return await _dbConnection.ExecuteAsync(sql, user);
+        string sql = @"INSERT INTO items 
+                        (key, value, expiration_period, expiration_date) 
+                        VALUES (@Key, @Value, @ExpirationPeriod, @ExpirationDate) 
+                        RETURNING *";
+
+        return await _dbConnection.QuerySingleOrDefaultAsync<ItemEntity>(sql, itemEntity);
     }
 
-    public async Task Delete(Guid id)
+    public async Task<ItemEntity?> Update(ItemEntity itemEntity)
     {
-        var queryArguments = new { Id = id };
+        string sql = @"UPDATE items 
+                        SET key=@Key, value=@Value, expiration_period=@ExpirationPeriod
+                        WHERE key=@Key 
+                        RETURNING *";
 
-        string sql = @"UPDATE users
-                            SET is_deleted=true
-                            WHERE id=@Id AND is_Deleted=false";
+        return await _dbConnection.QuerySingleOrDefaultAsync<ItemEntity>(sql, itemEntity); ;
+    }
 
-        await _dbConnection.ExecuteAsync(sql, queryArguments);
+    public async Task Delete(string key)
+    {
+        string sql = @"DELETE FROM items 
+                        WHERE key=@Key";
+
+        await _dbConnection.ExecuteAsync(sql, new { key });
     }
 }

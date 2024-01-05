@@ -12,11 +12,13 @@
     <None Remove="ScriptsSQL\001CreateDB.sql" />
     <None Remove="ScriptsSQL\002CreateUsersTable.sql" />
     <None Remove="ScriptsSQL\003CreateItemsTable.sql" />
+    <None Remove="ScriptsSQL\CreateTables\003CreateItemsTables.sql" />
   </ItemGroup>
 
   <ItemGroup>
 	  <EmbeddedResource Include="ScriptsSQL\CreateTables\001ClearTables.sql" />
     <EmbeddedResource Include="ScriptsSQL\CreateTables\002CreateUsersTables.sql" />
+    <EmbeddedResource Include="ScriptsSQL\CreateTables\003CreateItemsTables.sql" />
   </ItemGroup>
 
   <ItemGroup>

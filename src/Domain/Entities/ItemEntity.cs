@@ -1,8 +1,9 @@
 ﻿namespace Domain.Entities;
 
-public class ItemEntity : BaseEntity
+public class ItemEntity
 {
-    public Guid Id { get; set; }
-    public string? Name { get; set; }
-    public string? Address { get; set; }
+    public string Key { get; set; }
+    public string Value { get; set; }
+    public int ExpirationPeriod { get; set; }
+    public DateTime ExpirationDate { get; set; }
 }
