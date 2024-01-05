@@ -21,7 +21,7 @@ public class ItemService
 
         if (!itemEntities.Any())
         {
-            throw new NotFoundException("No items found");
+            return [];
         }
 
         IEnumerable<Item> items = itemEntities.Select(o => new Item
@@ -31,7 +31,7 @@ public class ItemService
             ExpirationPeriod = o.ExpirationPeriod,
             ExpirationDate = o.ExpirationDate
         });
-  
+
         return items;
     }
 
@@ -86,38 +86,45 @@ public class ItemService
         }
     }
 
-    public async Task<Guid> Add(UserAdd user)
+    public async Task<string> Update(ItemCreate itemDto)
     {
-        ItemEntity userEntity = new()
+        if (await _itemRepository.Get(itemDto.Key) is null)
         {
-            Name = user.Name,
-            Address = user.Address,
-        };
+            int ExPeriod = itemDto.ExpirationPeriod ?? 0;
 
-        return await _userRepository.Add(userEntity);
+            ItemEntity itemEntity = new()
+            {
+                Key = itemDto.Key,
+                Value = JsonSerializer.Serialize(itemDto.Value),
+                ExpirationPeriod = ExPeriod,
+                ExpirationDate = DateTime.Now.AddSeconds(ExPeriod)
+            };
+
+            await _itemRepository.Create(itemEntity);
+
+            return "Item created";
+        }
+        else
+        {
+            int ExPeriod = itemDto.ExpirationPeriod ?? 0;
+
+            ItemEntity itemEntity = new()
+            {
+                Key = itemDto.Key,
+                Value = JsonSerializer.Serialize(itemDto.Value),
+                ExpirationPeriod = ExPeriod
+            };
+
+            await _itemRepository.Update(itemEntity);
+
+            return "Item updated";
+        }
     }
 
-    public async Task Update(Guid id, UserAdd user)
+    public async Task Delete(string key)
     {
-        await Get(id);
+        await Get(key);
 
-        ItemEntity itemEntity = new()
-        {
-            Id = id,
-            Name = user.Name,
-            Address = user.Address,
-        };
-
-        int result = await _userRepository.Update(itemEntity);
-
-        if (result > 1)
-            throw new InvalidOperationException("Update was performed on multiple rows");
-    }
-
-    public async Task Delete(Guid id)
-    {
-        await Get(id);
-
-        await _userRepository.Delete(id);
+        await _itemRepository.Delete(key);
     }
 }
