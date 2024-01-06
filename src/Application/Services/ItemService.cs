@@ -2,6 +2,7 @@
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;
+using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 
 namespace Application.Services;
@@ -9,10 +10,16 @@ namespace Application.Services;
 public class ItemService
 {
     private readonly IItemRepository _itemRepository;
+    private readonly IConfiguration _configuration;
+    public int MaxItemExPeriod { get; }
+    public int DefaultExPeriod { get; }
 
-    public ItemService(IItemRepository itemRepository)
+    public ItemService(IItemRepository itemRepository, IConfiguration configuration)
     {
         _itemRepository = itemRepository;
+        _configuration = configuration;
+        MaxItemExPeriod = _configuration.GetValue<int>("MaxItemExpirationPeriod");
+        DefaultExPeriod = _configuration.GetValue<int>("ItemExpirationPeriod");
     }
 
     public async Task<IEnumerable<Item>> Get()
@@ -39,86 +46,97 @@ public class ItemService
     {
         ItemEntity itemEntity = await _itemRepository.Get(key) ?? throw new NotFoundException("Key not found");
 
-        Item item = new()
+        if (itemEntity.ExpirationDate > DateTime.UtcNow)
         {
-            Key = itemEntity.Key,
-            Value = JsonSerializer.Deserialize<List<string>>(itemEntity.Value),
-            ExpirationPeriod = itemEntity.ExpirationPeriod,
-            ExpirationDate = itemEntity.ExpirationDate
-        };
+            DateTime updatedDate = DateTime.UtcNow.AddSeconds(itemEntity.ExpirationPeriod);
 
-        return item;
+            Item item = new()
+            {
+                Key = itemEntity.Key,
+                Value = JsonSerializer.Deserialize<List<string>>(itemEntity.Value),
+                ExpirationPeriod = itemEntity.ExpirationPeriod,
+                ExpirationDate = updatedDate
+            };
+
+            await _itemRepository.UpdateExDate(itemEntity.Key, updatedDate);
+
+            return item;
+        }
+        else
+        {
+            await _itemRepository.Delete(key);
+
+            throw new NotFoundException();
+        }
+
     }
 
     public async Task<string> Create(ItemCreate itemDto)
     {
-        if (await _itemRepository.Get(itemDto.Key) is null)
+        if (itemDto.ExpirationPeriod < MaxItemExPeriod)
         {
-            int ExPeriod = itemDto.ExpirationPeriod ?? 0;
-
-            ItemEntity itemEntity = new()
+            if (await _itemRepository.Get(itemDto.Key) is null)
             {
-                Key = itemDto.Key,
-                Value = JsonSerializer.Serialize(itemDto.Value),
-                ExpirationPeriod = ExPeriod,
-                ExpirationDate = DateTime.Now.AddSeconds(ExPeriod)
-            };
+                int exPeriod = itemDto.ExpirationPeriod is 0 ? DefaultExPeriod : itemDto.ExpirationPeriod.Value;
 
-            await _itemRepository.Create(itemEntity);
+                ItemEntity itemEntity = new()
+                {
+                    Key = itemDto.Key,
+                    Value = JsonSerializer.Serialize(itemDto.Value),
+                    ExpirationPeriod = exPeriod,
+                    ExpirationDate = DateTime.Now.AddSeconds(exPeriod)
+                };
 
-            return "Item created";
+                await _itemRepository.Create(itemEntity);
+
+                return "Item created";
+            }
+
+            throw new FoundException("Item with same key already exists.");
         }
-        else
-        {
-            int ExPeriod = itemDto.ExpirationPeriod ?? 0;
 
-            ItemEntity itemEntity = new()
-            {
-                Key = itemDto.Key,
-                Value = JsonSerializer.Serialize(itemDto.Value),
-                ExpirationPeriod = ExPeriod,
-                ExpirationDate = DateTime.Now.AddSeconds(ExPeriod)
-            };
-
-            await _itemRepository.Create(itemEntity);
-
-            return "Item created";
-        }
+        throw new ArgumentException($"Invalid ExpirationPeriod field");
     }
 
     public async Task<string> Update(ItemCreate itemDto)
     {
-        if (await _itemRepository.Get(itemDto.Key) is null)
+        if (itemDto.ExpirationPeriod < MaxItemExPeriod)
         {
-            int ExPeriod = itemDto.ExpirationPeriod ?? 0;
-
-            ItemEntity itemEntity = new()
+            if (await _itemRepository.Get(itemDto.Key) is null)
             {
-                Key = itemDto.Key,
-                Value = JsonSerializer.Serialize(itemDto.Value),
-                ExpirationPeriod = ExPeriod,
-                ExpirationDate = DateTime.Now.AddSeconds(ExPeriod)
-            };
+                int exPeriod = itemDto.ExpirationPeriod is 0 ? DefaultExPeriod : itemDto.ExpirationPeriod.Value;
 
-            await _itemRepository.Create(itemEntity);
+                ItemEntity itemEntity = new()
+                {
+                    Key = itemDto.Key,
+                    Value = JsonSerializer.Serialize(itemDto.Value),
+                    ExpirationPeriod = exPeriod,
+                    ExpirationDate = DateTime.Now.AddSeconds(exPeriod)
+                };
 
-            return "Item created";
-        }
-        else
-        {
-            int ExPeriod = itemDto.ExpirationPeriod ?? 0;
+                await _itemRepository.Create(itemEntity);
 
-            ItemEntity itemEntity = new()
+                return "Item created";
+            }
+            else
             {
-                Key = itemDto.Key,
-                Value = JsonSerializer.Serialize(itemDto.Value),
-                ExpirationPeriod = ExPeriod
-            };
+                int exPeriod = itemDto.ExpirationPeriod is 0 ? DefaultExPeriod : itemDto.ExpirationPeriod.Value;
 
-            await _itemRepository.Update(itemEntity);
+                ItemEntity itemEntity = new()
+                {
+                    Key = itemDto.Key,
+                    Value = JsonSerializer.Serialize(itemDto.Value),
+                    ExpirationPeriod = exPeriod,
+                    ExpirationDate = DateTime.Now.AddSeconds(exPeriod)
+                };
 
-            return "Item updated";
+                await _itemRepository.Update(itemEntity);
+
+                return "Item updated";
+            }
         }
+
+        throw new ArgumentException($"Invalid ExpirationPeriod field");
     }
 
     public async Task Delete(string key)

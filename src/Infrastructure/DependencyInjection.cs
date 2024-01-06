@@ -1,5 +1,6 @@
 ﻿using Domain.Interfaces;
 using Infrastructure.Repository;
+using Infrastructure.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using System.Data;
@@ -14,5 +15,6 @@ public static class DependencyInjection
         services.AddScoped<IDbConnection>(sp => new NpgsqlConnection(dbConnectionString));
         services.AddScoped<IItemRepository, ItemRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddHostedService<DbCleanupBgService>();
     }
 }
