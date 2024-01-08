@@ -29,7 +29,7 @@ public class DbCleanupBgService : BackgroundService
             {
                 using (var scope = _scopeFactory.CreateScope())
                 {
-                    var itemRepository = scope.ServiceProvider.GetRequiredService<IItemRepository>();
+                    IItemRepository itemRepository = scope.ServiceProvider.GetRequiredService<IItemRepository>();
 
                     DateTime date = DateTime.UtcNow;
 
