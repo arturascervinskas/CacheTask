@@ -60,16 +60,17 @@ public class ItemRepository : IItemRepository
 
     public async Task<int> DeleteExpiredItems(DateTime date)
     {
-        var sql = @"DELETE FROM Items
-                     WHERE expiration_date <= @ExpiredDate";
+        string sql = @"DELETE FROM Items
+                        WHERE expiration_date <= @ExpiredDate";
 
         return await _dbConnection.ExecuteAsync(sql, new { ExpiredDate = date });
     }
 
-    public async Task UpdateExDate(string key, DateTime date)
+    public async Task UpdateExDate(ItemEntity itemEntity)
     {
-        string sql = "UPDATE items SET expiration_date = @ExpirationDate WHERE key = @Key";
+        string sql = @"UPDATE items 
+                        SET expiration_date = @ExpirationDate WHERE key = @Key";
 
-        await _dbConnection.ExecuteAsync(sql, new { ExpirationDate = date, Key = key });
+        await _dbConnection.ExecuteAsync(sql, new { ExpirationDate = itemEntity.ExpirationDate, Key = itemEntity.Key });
     }
 }

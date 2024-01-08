@@ -18,7 +18,6 @@ public class DbCleanupBgService : BackgroundService
         _logger = logger;
         _scopeFactory = scopeFactory;
         _dbCleanupInterval = _configuration.GetValue<int>("DbCleanupInterval");
-
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -42,9 +41,8 @@ public class DbCleanupBgService : BackgroundService
             {
                 _logger.LogError(ex, "Error occurred during database cleanup.");
             }
+
             await Task.Delay(TimeSpan.FromSeconds(_dbCleanupInterval), stoppingToken);
-
         }
-
     }
 }

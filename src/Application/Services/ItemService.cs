@@ -53,15 +53,17 @@ public class ItemService
 
         DateTime updatedDate = DateTime.UtcNow.AddSeconds(itemEntity.ExpirationPeriod);
 
+        itemEntity.ExpirationDate = updatedDate;
+
+        await _itemRepository.UpdateExDate(itemEntity);
+
         Item item = new()
         {
             Key = itemEntity.Key,
             Value = JsonSerializer.Deserialize<List<object>>(itemEntity.Value),
             ExpirationPeriod = itemEntity.ExpirationPeriod,
-            ExpirationDate = updatedDate
+            ExpirationDate = itemEntity.ExpirationDate
         };
-
-        await _itemRepository.UpdateExDate(itemEntity.Key, updatedDate);
 
         return item;
     }
@@ -75,7 +77,6 @@ public class ItemService
 
         if (exPeriod > _maxItemExPeriod)
             throw new ArgumentException($"Invalid ExpirationPeriod field");
-
 
         if (await _itemRepository.Get(itemDto.Key) is null)
         {

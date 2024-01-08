@@ -10,5 +10,5 @@ public interface IItemRepository
     public Task<ItemEntity?> Update(ItemEntity itemEntity);
     public Task Delete(string key);
     public Task<int> DeleteExpiredItems(DateTime date);
-    public Task UpdateExDate(string key, DateTime date);
+    public Task UpdateExDate(ItemEntity itemEntity);
 }
