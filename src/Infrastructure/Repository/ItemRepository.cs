@@ -69,7 +69,8 @@ public class ItemRepository : IItemRepository
     public async Task UpdateExDate(ItemEntity itemEntity)
     {
         string sql = @"UPDATE items 
-                        SET expiration_date = @ExpirationDate WHERE key = @Key";
+                        SET expiration_date = @ExpirationDate
+                        WHERE key = @Key";
 
         await _dbConnection.ExecuteAsync(sql, new { ExpirationDate = itemEntity.ExpirationDate, Key = itemEntity.Key });
     }
