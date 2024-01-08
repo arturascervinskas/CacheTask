@@ -8,15 +8,25 @@ using System.Text;
 
 namespace WebAPI.Services;
 
+/// <summary>
+/// Provides methods to configure JWT authentication in the service collection.
+/// </summary>
 public class JWTService : IJWTService
 {
     private readonly IConfiguration _config;
 
+    /// <summary>
+    /// Initializes a new instance of the JWTService class with the specified IConfiguration.
+    /// </summary>
+    /// <param name="config">The IConfiguration object containing necessary settings.</param>
     public JWTService(IConfiguration config)
     {
         _config = config;
     }
 
+    /// <summary>
+    /// Generates a JWT token based on the provided user login information.
+    /// </summary>
     public string GenerateToken(UserLogin user)
     {
         Guid guid = Guid.NewGuid();
@@ -46,6 +56,9 @@ public class JWTService : IJWTService
         return tokenHandler.WriteToken(token);
     }
 
+    /// <summary>
+    /// Validates the JWT token.
+    /// </summary>
     public Guid ValidateJwtToken(string? token)
     {
         if (token == null)

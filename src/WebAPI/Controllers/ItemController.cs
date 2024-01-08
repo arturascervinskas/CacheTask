@@ -56,7 +56,6 @@ public class ItemController : ControllerBase
         return Ok(new { response });
     }
 
-
     /// <summary>
     /// Updates an existing item based on the provided item information.
     /// </summary>
@@ -81,5 +80,4 @@ public class ItemController : ControllerBase
 
         return Ok(new { response = "Key deleted"});
     }
-
 }

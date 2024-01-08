@@ -1,9 +1,7 @@
-﻿using Application.Dto;
-using Application.Services;
+﻿using Application.Services;
 using Domain.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebAPI.Services;
 
 namespace WebAPI.Controllers;
 
