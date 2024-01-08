@@ -2,21 +2,27 @@
 using Application;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text.Json.Serialization;
 using WebAPI.Middleware;
 
 namespace WebAPI;
 
+/// <summary>
+/// Main entry point for the application.
+/// </summary>
 public class Program
 {
+    /// <summary>
+    /// Main method that starts the application.
+    /// </summary>
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
         string? dbConnectionString = builder.Configuration.GetConnectionString("PostgreConnection");
         // Add services to the container.
 
+        builder.Services.AddSwaggerGen();
         builder.Services.AddControllers()
                         .AddJsonOptions(options =>
                         {
@@ -25,10 +31,10 @@ public class Program
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
 
         builder.Services.AddApplication();
         builder.Services.AddInfrastructure(dbConnectionString);
+
         builder.Services.AddJWTAuthenticate(builder.Configuration);
 
         //change logger
@@ -45,7 +51,7 @@ public class Program
         //custom middleware
         app.UseMiddleware<ErrorChecking>();
 
-        // Configure the HTTP request pipeline.
+        //Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
