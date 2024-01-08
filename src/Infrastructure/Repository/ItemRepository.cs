@@ -43,7 +43,7 @@ public class ItemRepository : IItemRepository
     public async Task<ItemEntity?> Update(ItemEntity itemEntity)
     {
         string sql = @"UPDATE items 
-                        SET key=@Key, value=@Value, expiration_period=@ExpirationPeriod
+                        SET key=@Key, value=@Value, expiration_period=@ExpirationPeriod, expiration_date=@ExpirationDate
                         WHERE key=@Key 
                         RETURNING *";
 
@@ -56,5 +56,22 @@ public class ItemRepository : IItemRepository
                         WHERE key=@Key";
 
         await _dbConnection.ExecuteAsync(sql, new { key });
+    }
+
+    public async Task<int> DeleteExpiredItems(DateTime date)
+    {
+        string sql = @"DELETE FROM Items
+                        WHERE expiration_date <= @ExpiredDate";
+
+        return await _dbConnection.ExecuteAsync(sql, new { ExpiredDate = date });
+    }
+
+    public async Task UpdateExDate(ItemEntity itemEntity)
+    {
+        string sql = @"UPDATE items 
+                        SET expiration_date = @ExpirationDate
+                        WHERE key = @Key";
+
+        await _dbConnection.ExecuteAsync(sql, new { ExpirationDate = itemEntity.ExpirationDate, Key = itemEntity.Key });
     }
 }
